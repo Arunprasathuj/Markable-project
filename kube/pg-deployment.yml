@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  labels:
+    app: rails-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rails-app
+  template:
+    metadata:
+      labels:
+        app: rails-app
+    spec:
+      volumes:
+      - name: postgres-pv
+        persistentVolumeClaim:
+          claimName: postgres-pvc
+      containers:
+      - name: postgres
+        image: arunprasathuj/budget-app-db:latest
+        env:
+        - name: POSTGRES_USER
+          value: admin
+        - name: POSTGRES_PASSWORD
+          value: password
+        - name: POSTGRES_DB
+          value: Budgy_development
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - mountPath: "/var/lib/postgresql/data"
+          name: postgres-pv
